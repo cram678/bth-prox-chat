@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+</html>
+<form>
+    <button>Connect with BLE</button>
+</form>
+<script>
+    function isWebBLEAvailable(){
+        if (navigator.bluetooth) {
+            console.log('WebBLE is available');
+            return true;
+        } else {
+            console.log('WebBLE is not available');
+            return false;
+        }
+    }
+
+    function getDeviceInfo(){
+        navigator.bluetooth.requestDevice({
+            acceptAllDevices: true
+        })
+        .then(device => {
+            console.log(device);
+            return device.gatt.connect();
+        })
+        .then(server => {
+            console.log(server);
+            return server.getPrimaryService('battery_service');
+        })
+        .then(service => {
+            console.log(service);
+            return service.getCharacteristic('battery_level');
+        })
+        .then(characteristic => {
+            console.log(characteristic);
+            return characteristic.readValue();
+        })
+        .then(value => {
+            console.log(value);
+            console.log('Battery percentage is ' + value.getUint8(0));
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    }
+    if (isWebBLEAvailable()) {
+        getDeviceInfo();
+    }
+</script>
